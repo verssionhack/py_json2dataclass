@@ -4,7 +4,7 @@
 import sys
 import os
 import os.path as op
-from .utils import json2dataclass
+from utils import json2dataclass, parse
 import json as j
 
 
@@ -17,12 +17,12 @@ def main():
         else:
             path, name = arg, op.basename(arg.rsplit('.', 1)[0])
         json = j.load(open(path, 'r'))
-        dataclass_tb = json2dataclass(name, json)
+        dataclass_tb = json2dataclass(parse(name, json))
 
         if not op.exists(name + '.py'):
             with open(name + '.py', 'w') as fd:
                 fd.write('from dataclasses import dataclass\nfrom typing import *\n')
-                for dataclass in dataclass_tb.values():
+                for dataclass in dataclass_tb:
                     fd.write(dataclass)
                     fd.write('\n' * 4)
         else:
